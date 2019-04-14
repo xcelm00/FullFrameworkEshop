@@ -25,9 +25,14 @@ namespace FullFrameworkEshop.Models
         {
         }
 
+        public DbSet<Order> Orders { get; set; } 
+        public DbSet<Product> Products { get; set; } 
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<FullFrameworkEshop.Models.ProductType> ProductTypes { get; set; }
     }
 }
