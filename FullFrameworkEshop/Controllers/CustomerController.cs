@@ -17,11 +17,12 @@ namespace FullFrameworkEshop.Controllers
         // GET: Customer
         public ActionResult Index()
         {
-            return View(db.Customers.ToList());
+            var customers = db.Customers.Include(c => c.Country).Include(c => c.Region);
+            return View(customers.ToList());
         }
 
         // GET: Customer/Details/5
-        public ActionResult Details(string id)
+        public ActionResult Details(Guid? id)
         {
             if (id == null)
             {
@@ -38,61 +39,33 @@ namespace FullFrameworkEshop.Controllers
         // GET: Customer/Create
         public ActionResult Create()
         {
+            ViewBag.CountryIso3 = new SelectList(db.Countries, "Iso3", "CountryNameEnglish");
+            ViewBag.RegionCode = new SelectList(db.Regions, "RegionCode", "RegionNameEnglish");
             return View();
         }
-
-        [HttpGet]
-        public ActionResult GetRegions()
-        {
-
-            List<SelectListItem> regionsItem = db.Regions.AsNoTracking()
-                .OrderBy(x=>x.Name)
-                .Select(x => new SelectListItem
-            {
-                Value = x.Id.ToString(),
-                Text = x.Name
-            }).ToList();
-
-            regionsItem.Insert(0, new SelectListItem
-            {
-                Value = null,
-                Text = @"select region"
-            });
-
-            SelectList regions = new SelectList(regionsItem, nameof(SelectListItem.Value), nameof(SelectListItem.Text));
-
-
-
-            IEnumerable<SelectListItem> regs = regions;
-
-            return Json(regs, JsonRequestBehavior.AllowGet);
-        }
-
-
-
-
-
-
 
         // POST: Customer/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CustomerID,CustomerName,SelectedCountryIso3,SelectedRegionCode")] Customer customer)
+        public ActionResult Create([Bind(Include = "CustomerID,CustomerName,CountryIso3,RegionCode")] Customer customer)
         {
             if (ModelState.IsValid)
             {
+                customer.CustomerID = Guid.NewGuid();
                 db.Customers.Add(customer);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
+            ViewBag.CountryIso3 = new SelectList(db.Countries, "Iso3", "CountryNameEnglish", customer.CountryIso3);
+            ViewBag.RegionCode = new SelectList(db.Regions, "RegionCode", "Iso3", customer.RegionCode);
             return View(customer);
         }
 
         // GET: Customer/Edit/5
-        public ActionResult Edit(string id)
+        public ActionResult Edit(Guid? id)
         {
             if (id == null)
             {
@@ -103,6 +76,8 @@ namespace FullFrameworkEshop.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.CountryIso3 = new SelectList(db.Countries, "Iso3", "CountryNameEnglish", customer.CountryIso3);
+            ViewBag.RegionCode = new SelectList(db.Regions, "RegionCode", "Iso3", customer.RegionCode);
             return View(customer);
         }
 
@@ -111,7 +86,7 @@ namespace FullFrameworkEshop.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CustomerID,CustomerName,SelectedCountryIso3,SelectedRegionCode")] Customer customer)
+        public ActionResult Edit([Bind(Include = "CustomerID,CustomerName,CountryIso3,RegionCode")] Customer customer)
         {
             if (ModelState.IsValid)
             {
@@ -119,11 +94,13 @@ namespace FullFrameworkEshop.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.CountryIso3 = new SelectList(db.Countries, "Iso3", "CountryNameEnglish", customer.CountryIso3);
+            ViewBag.RegionCode = new SelectList(db.Regions, "RegionCode", "Iso3", customer.RegionCode);
             return View(customer);
         }
 
         // GET: Customer/Delete/5
-        public ActionResult Delete(string id)
+        public ActionResult Delete(Guid? id)
         {
             if (id == null)
             {
@@ -140,13 +117,56 @@ namespace FullFrameworkEshop.Controllers
         // POST: Customer/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
+        public ActionResult DeleteConfirmed(Guid id)
         {
             Customer customer = db.Customers.Find(id);
             db.Customers.Remove(customer);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public ActionResult GetRegions()
+        {
+
+            List<SelectListItem> regions = db.Regions.AsNoTracking()
+                .OrderBy(x => x.RegionNameEnglish)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.RegionCode,
+                    Text = x.RegionNameEnglish
+                }).ToList();
+
+            regions.Insert(0,new SelectListItem
+            {
+                Value = null,
+                Text = "---please select region---"
+            });
+
+            return Json(regions, JsonRequestBehavior.AllowGet);
+
+        }
+
+        [HttpGet]
+        public ActionResult GetRegions(string iso3)
+        {
+            List<SelectListItem> regions = db.Regions.AsNoTracking().Where(x=>x.Iso3 == iso3)
+                .OrderBy(x => x.RegionNameEnglish)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.RegionCode,
+                    Text = x.RegionNameEnglish
+                }).ToList();
+
+            regions.Insert(0, new SelectListItem
+            {
+                Value = null,
+                Text = "---please select region---"
+            });
+
+            return Json(regions, JsonRequestBehavior.AllowGet);
+        }
+
 
         protected override void Dispose(bool disposing)
         {

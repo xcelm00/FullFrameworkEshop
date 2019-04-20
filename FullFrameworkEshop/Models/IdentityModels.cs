@@ -29,7 +29,7 @@ namespace FullFrameworkEshop.Models
         public DbSet<Product> Products { get; set; } 
         public DbSet<Customer> Customers { get; set; } 
         public DbSet<Region> Regions { get; set; }
-        public DbSet<Countries> Countries { get; set; }
+        public DbSet<Country> Countries { get; set; }
 
 
 

@@ -3,15 +3,52 @@ namespace FullFrameworkEshop.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Mig1 : DbMigration
+    public partial class Initial : DbMigration
     {
         public override void Up()
         {
+            CreateTable(
+                "dbo.Countries",
+                c => new
+                    {
+                        Iso3 = c.String(nullable: false, maxLength: 3),
+                        CountryNameEnglish = c.String(nullable: false, maxLength: 50),
+                    })
+                .PrimaryKey(t => t.Iso3);
+            
+            CreateTable(
+                "dbo.Customers",
+                c => new
+                    {
+                        CustomerID = c.Guid(nullable: false),
+                        CustomerName = c.String(nullable: false, maxLength: 128),
+                        CountryIso3 = c.String(nullable: false, maxLength: 3),
+                        RegionCode = c.String(maxLength: 3),
+                    })
+                .PrimaryKey(t => t.CustomerID)
+                .ForeignKey("dbo.Countries", t => t.CountryIso3, cascadeDelete: true)
+                .ForeignKey("dbo.Regions", t => t.RegionCode)
+                .Index(t => t.CountryIso3)
+                .Index(t => t.RegionCode);
+            
+            CreateTable(
+                "dbo.Regions",
+                c => new
+                    {
+                        RegionCode = c.String(nullable: false, maxLength: 3),
+                        Iso3 = c.String(nullable: false, maxLength: 3),
+                        RegionNameEnglish = c.String(nullable: false),
+                    })
+                .PrimaryKey(t => t.RegionCode)
+                .ForeignKey("dbo.Countries", t => t.Iso3, cascadeDelete: true)
+                .Index(t => t.Iso3);
+            
             CreateTable(
                 "dbo.Orders",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
+                        Customer = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -21,6 +58,18 @@ namespace FullFrameworkEshop.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
+                        ProductTypeId = c.Int(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.ProductTypes", t => t.ProductTypeId)
+                .Index(t => t.ProductTypeId);
+            
+            CreateTable(
+                "dbo.ProductTypes",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        ProductTypeName = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -113,8 +162,12 @@ namespace FullFrameworkEshop.Migrations
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
+            DropForeignKey("dbo.Products", "ProductTypeId", "dbo.ProductTypes");
             DropForeignKey("dbo.ProductOrders", "Order_Id", "dbo.Orders");
             DropForeignKey("dbo.ProductOrders", "Product_Id", "dbo.Products");
+            DropForeignKey("dbo.Customers", "RegionCode", "dbo.Regions");
+            DropForeignKey("dbo.Regions", "Iso3", "dbo.Countries");
+            DropForeignKey("dbo.Customers", "CountryIso3", "dbo.Countries");
             DropIndex("dbo.ProductOrders", new[] { "Order_Id" });
             DropIndex("dbo.ProductOrders", new[] { "Product_Id" });
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
@@ -123,14 +176,22 @@ namespace FullFrameworkEshop.Migrations
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
+            DropIndex("dbo.Products", new[] { "ProductTypeId" });
+            DropIndex("dbo.Regions", new[] { "Iso3" });
+            DropIndex("dbo.Customers", new[] { "RegionCode" });
+            DropIndex("dbo.Customers", new[] { "CountryIso3" });
             DropTable("dbo.ProductOrders");
             DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.AspNetUsers");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetRoles");
+            DropTable("dbo.ProductTypes");
             DropTable("dbo.Products");
             DropTable("dbo.Orders");
+            DropTable("dbo.Regions");
+            DropTable("dbo.Customers");
+            DropTable("dbo.Countries");
         }
     }
 }

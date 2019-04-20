@@ -6,19 +6,16 @@ using System.Web;
 
 namespace FullFrameworkEshop.Models
 {
-    public class Region
+    public class Country
     {
         [Key]
-        [MaxLength(3)]
-        public string RegionCode { get; set; }
-
-        [Required]
         [MaxLength(3)]
         public string Iso3 { get; set; }
 
         [Required]
-        public string RegionNameEnglish { get; set; }
+        [MaxLength(50)]
+        public string CountryNameEnglish { get; set; }
 
-        public virtual Country Country { get; set; }
+        public virtual IEnumerable<Region> Regions { get; set; }
     }
 }

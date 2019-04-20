@@ -6,40 +6,59 @@
 
 <h2>Index</h2>
 
+<button class="btn btn-info"  onclick="setText()">fiddle</button>
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
 <table class="table">
     <tr>
         <th>
+            @Html.DisplayNameFor(model => model.Country.CountryNameEnglish)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Region.Iso3)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.CustomerName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SelectedCountryIso3)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SelectedRegionCode)
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.CustomerName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SelectedCountryIso3)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SelectedRegionCode)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.CustomerID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.CustomerID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.CustomerID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Country.CountryNameEnglish)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Region.Iso3)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustomerName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.CustomerID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.CustomerID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.CustomerID })
+            </td>
+        </tr>
+    }
 
 </table>
+
+
+<p id="#pad" class="active">h</p>
+
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+    });
+
+    function setText() {
+        console.log("ready from button!");
+        $(".active").text("Konecne to fakci!!");
+    };
+
+</script>

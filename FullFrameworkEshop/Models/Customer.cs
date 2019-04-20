@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -10,23 +11,22 @@ namespace FullFrameworkEshop.Models
     public class Customer
     {
         [Key]
-        [Display(Name = "Customer Number")]
-        public string CustomerID { get; set; }
+        [Column(Order = 1)]
+        public Guid CustomerID { get; set; }
 
         [Required]
-        [Display(Name = "Customer Name")]
-        [StringLength(75)]
+        [MaxLength(128)]
         public string CustomerName { get; set; }
 
         [Required]
-        [Display(Name = "Country")]
-        public string SelectedCountryIso3 { get; set; }
-        public IEnumerable<SelectListItem> Countries { get; set; }
+        [MaxLength(3)]
+        public string CountryIso3 { get; set; }
 
-        [Required]
-        [Display(Name = "State / Region")]
-        public string SelectedRegionCode { get; set; } //stores the unique key
-        public IEnumerable<SelectListItem> Regions { get; set; } //unique key bude vybran v ramci teto kolekce
+        [MaxLength(3)]
+        public string RegionCode { get; set; }
 
+        public virtual Country Country { get; set; }
+
+        public virtual Region Region { get; set; }
     }
 }

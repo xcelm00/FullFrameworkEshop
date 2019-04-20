@@ -12,27 +12,27 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
+            @Html.DisplayNameFor(model => model.Country.CountryNameEnglish)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Country.CountryNameEnglish)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Region.Iso3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Region.Iso3)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.CustomerName)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.CustomerName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.SelectedCountryIso3)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.SelectedCountryIso3)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.SelectedRegionCode)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.SelectedRegionCode)
         </dd>
 
     </dl>
