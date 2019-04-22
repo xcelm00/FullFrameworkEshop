@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using FullFrameworkEshop.Models;
+using Newtonsoft.Json;
+using WebGrease.Css.Extensions;
 
 namespace FullFrameworkEshop.Controllers
 {
@@ -126,46 +128,76 @@ namespace FullFrameworkEshop.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetRegions()
+        public ActionResult GetCountries()
         {
 
-            List<SelectListItem> regions = db.Regions.AsNoTracking()
-                .OrderBy(x => x.RegionNameEnglish)
-                .Select(x => new SelectListItem
-                {
-                    Value = x.RegionCode,
-                    Text = x.RegionNameEnglish
-                }).ToList();
+            //var countries = from c in db.Countries
+            //                select new 
+            //                {
+            //                    c.CountryNameEnglish,
+            //                    c.Iso3,
+            //                    c.Regions = new List<Region>(
+            //                        from r in c.Regions
+            //                        select new Region()
+            //                        {
+            //                            RegionNameEnglish = r.RegionNameEnglish,
+            //                            Iso3 = r.Iso3,
+            //                            RegionCode = r.RegionCode,
+            //                            Country = r.Country
+            //                        }).Cast<Region>()
+            //                };
 
-            regions.Insert(0,new SelectListItem
-            {
-                Value = null,
-                Text = "---please select region---"
-            });
 
-            return Json(regions, JsonRequestBehavior.AllowGet);
+            //db.Configuration.LazyLoadingEnabled = false;
+            //db.Configuration.ProxyCreationEnabled = false;
+
+
+
+            //var countries = db.Countries.Include(x => x.Regions).ToList();
+            var countries = JsonConvert.SerializeObject(db.Countries.Include(x => x.Regions), Formatting.None, new JsonSerializerSettings() {ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore });
+
+
+            //    var countries = from c in db.Countries
+            //        select new
+            //        {
+            //            c.CountryNameEnglish,
+            //            c.Iso3,
+            //            Region = new List<Region>(
+            //                from r in c.Regions
+            //                select new Region()
+            //                {
+            //                    RegionNameEnglish = r.RegionNameEnglish,
+            //                    Iso3 = r.Iso3,
+            //                    RegionCode = r.RegionCode,
+            //                    Country = r.Country
+            //                }).Cast<Region>()
+            //        };
+
+
+            //return Json(countries, JsonRequestBehavior.AllowGet);
+            return Content(countries, "application/json");
 
         }
 
-        [HttpGet]
-        public ActionResult GetRegions(string iso3)
-        {
-            List<SelectListItem> regions = db.Regions.AsNoTracking().Where(x=>x.Iso3 == iso3)
-                .OrderBy(x => x.RegionNameEnglish)
-                .Select(x => new SelectListItem
-                {
-                    Value = x.RegionCode,
-                    Text = x.RegionNameEnglish
-                }).ToList();
+        //[HttpGet]
+        //public ActionResult GetRegions(string iso3)
+        //{
+        //    List<SelectListItem> regions = db.Regions.AsNoTracking().Where(x=>x.Iso3 == iso3)
+        //        .OrderBy(x => x.RegionNameEnglish)
+        //        .Select(x => new SelectListItem
+        //        {
+        //            Value = x.RegionCode,
+        //            Text = x.RegionNameEnglish
+        //        }).ToList();
 
-            regions.Insert(0, new SelectListItem
-            {
-                Value = null,
-                Text = "---please select region---"
-            });
+        //    regions.Insert(0, new SelectListItem
+        //    {
+        //        Value = null,
+        //        Text = "---please select region---"
+        //    });
 
-            return Json(regions, JsonRequestBehavior.AllowGet);
-        }
+        //    return Json(regions, JsonRequestBehavior.AllowGet);
+        //}
 
 
         protected override void Dispose(bool disposing)

@@ -16,6 +16,6 @@ namespace FullFrameworkEshop.Models
         [MaxLength(50)]
         public string CountryNameEnglish { get; set; }
 
-        public virtual IEnumerable<Region> Regions { get; set; }
+        public ICollection<Region> Regions { get; set; }
     }
 }

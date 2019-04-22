@@ -6,7 +6,7 @@
 
 <h2>Index</h2>
 
-<button class="btn btn-info"  onclick="setText()">fiddle</button>
+<button class="btn btn-info" onclick="setText()">fiddle</button>
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
@@ -46,8 +46,9 @@
 
 </table>
 
+url je @Request.Url.AbsoluteUri
 
-<p id="#pad" class="active">h</p>
+<div id="pad" class="active">h</div>
 
 
 <script src="~/Scripts/jquery-3.3.1.min.js"></script>
@@ -57,8 +58,22 @@
     });
 
     function setText() {
+        var a = $("#pad");
+        a.empty();
         console.log("ready from button!");
-        $(".active").text("Konecne to fakci!!");
+        $.getJSON( "/customer/GetCountries", function( data ) {
+            //console.log(data);
+            $.each(data, function (i, field) {
+                console.log(field.CountryNameEnglish);
+                $("#pad").append("<p>" + field.CountryNameEnglish + "</p>");
+
+                $.each(field.Regions,
+                    function(y, field2) {
+                        $("#pad").append("<p>" + field2.RegionNameEnglish + "</p>");
+                    });
+
+            });
+        });
     };
 
 </script>
